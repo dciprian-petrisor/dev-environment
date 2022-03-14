@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # disable the default synced folder
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.box = "pcd/pop-os"
+  config.vm.box_version = "21.10"
+  # Leave this here, pop-os is based on ubuntu, but there is no official support
+  # for detecting the guest OS, which is needed for things like shares to work properly.
+  config.vm.guest = "ubuntu"
+  # use default switch to avoid prompts
+  config.vm.network "public_network", bridge: "Default Switch"
+
+  config.vm.provision "file", source: "./playbook.yml", destination: "~/playbook.yml"
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "playbook.yml"
+    ansible.install = true
+    ansible.provisioning_path = "/home/vagrant"
+  end
+end
