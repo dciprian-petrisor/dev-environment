@@ -1,6 +1,13 @@
 #!/bin/sh -eux
 
 echo "Cleaning up install..."
+
+echo "Remove libreoffice"
+dpkg --list \
+  | awk '{ print $2 }' \
+  | grep 'libreoffice.*' \
+  | xargs -i sh -c "apt-get -y purge {}";
+
 echo "Pop! OS may not have some of these compared to Ubuntu, we remove what is possible."
 echo "remove linux-headers"
 dpkg --list \

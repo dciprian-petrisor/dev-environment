@@ -54,7 +54,8 @@
             "ssh_username": "vagrant",
             "switch_name": "{{user `hyperv_switch`}}",
             "type": "hyperv-iso",
-            "vm_name": "{{ user `template` }}"
+            "vm_name": "{{ user `template` }}",
+	        "configuration_version": "9.2"
         }
     ],
     "post-processors": [
@@ -80,6 +81,8 @@
                 "{{template_dir}}/scripts/networking.sh",
                 "{{template_dir}}/scripts/sudoers.sh",
                 "{{template_dir}}/scripts/vagrant.sh",
+                "{{template_dir}}/scripts/hyperv_enhanced_session.sh",
+                "{{template_dir}}/scripts/hyperv_sound.sh",
                 "{{template_dir}}/scripts/cleanup.sh",
                 "{{template_dir}}/../_common/minimize.sh"
             ],
