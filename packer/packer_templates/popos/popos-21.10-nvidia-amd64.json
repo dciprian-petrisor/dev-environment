@@ -55,6 +55,8 @@
             "switch_name": "{{user `hyperv_switch`}}",
             "type": "hyperv-iso",
             "vm_name": "{{ user `template` }}",
+            "boot_order": ["SCSI:0:0", "DVD", "NET"],
+            "first_boot_device": "DVD",
 	        "configuration_version": "9.2"
         }
     ],
