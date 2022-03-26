@@ -1,0 +1,16 @@
+---
+# tasks file for tools
+- name: Add fish shell ppa
+  ansible.builtin.apt_repository:
+    repo: ppa:fish-shell/release-3
+    
+- name: Install apt packages
+  apt:
+    update_cache: yes
+    pkg:
+      - neovim
+      - tmux
+      - git
+      - fish
+      - fonts-hack-ttf
+
