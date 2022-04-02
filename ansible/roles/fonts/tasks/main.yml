@@ -1,0 +1,22 @@
+---
+
+- name: Remove nerd-fonts
+  file:
+    path: /tmp/nerd-fonts
+    state: absent
+  
+
+- name: Sparse clone nerd-fonts
+  shell: |
+      git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
+  args:
+    chdir: /tmp
+  
+- name: Install Hack
+  shell: |
+      git sparse-checkout add patched-fonts/Hack
+      ./install.sh
+  args:
+    chdir: /tmp/nerd-fonts
+
+    

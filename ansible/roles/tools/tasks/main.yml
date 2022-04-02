@@ -1,10 +1,17 @@
 ---
 # tasks file for tools
 - name: Add fish shell ppa
+  become: true
   ansible.builtin.apt_repository:
     repo: ppa:fish-shell/release-3
-    
+
+- name: Add neovim ppa
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:neovim-ppa/unstable
+
 - name: Install apt packages
+  become: true
   apt:
     update_cache: yes
     pkg:
@@ -12,5 +19,56 @@
       - tmux
       - git
       - fish
-      - fonts-hack-ttf
+      - exa
+
+- name: Change shell to fish
+  become: true
+  user:
+    name: vagrant
+    shell: /usr/bin/fish
+
+- name: Install fisher
+  shell: curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+  args:
+    executable: /usr/bin/fish
+
+- name: Install tide
+  shell: fisher install IlanCosman/tide@v5
+  args:
+    executable: /usr/bin/fish
+
+- name: Install nvm
+  shell: fisher install jorgebucaran/nvm.fish
+  args:
+    executable: /usr/bin/fish
+
+- name: Install Node LTS
+  shell: nvm install lts && set --universal nvm_default_version lts
+  args:
+    executable: /usr/bin/fish
+
+- name: Install tree-sitter-cli
+  shell: nvm use lts && npm i -g tree-sitter-cli
+  args:
+    executable: /usr/bin/fish
+
+- name: Install z for fish
+  shell: fisher install jethrokuan/z 
+  args:
+    executable: /usr/bin/fish
+
+- name: Install vim-plug
+  shell: curl -fLo /home/vagrant/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  args:
+    executable: /usr/bin/fish
+
+- name: Copy configs
+  copy:
+    src: configs/
+    dest: ~/
+
+- name: Install and update nvim plugins
+  shell: nvim --headless +PlugInstall +qall
+  args:
+    executable: /usr/bin/fish
 

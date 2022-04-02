@@ -22,6 +22,6 @@ If you want to use one that is already published to Vagrant's cloud, then go to 
 
 1. Enable Hyper-V.
 2. Install Vagrant.
-3. Run ```powershell -ExecutionPolicy Bypass -File setup.ps1``` from an admin console to initialize the VM.
+3. Run ```vagrant up --provider hyperv``` from an admin console to initialize the VM.
 
 

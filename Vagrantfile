@@ -18,8 +18,7 @@ Vagrant.configure("2") do |config|
     h.enable_enhanced_session_mode = true
     h.linked_clone = true
   end
-  # disable the default synced folder
-  config.vm.synced_folder '.', '/vagrant', disabled: true
+
   config.vm.box = "pcd/pop-os-21.10"
   config.vm.box_version = "1.0.0"
   # Leave this here, pop-os is based on ubuntu, but there is no official support
@@ -27,10 +26,8 @@ Vagrant.configure("2") do |config|
   config.vm.guest = "ubuntu"
   # use default switch to avoid prompts
   config.vm.network "public_network", bridge: "Default Switch"
-  config.vm.provision "file", source: "./playbook.yml", destination: "~/playbook.yml"
   config.vm.provision "ansible_local" do |ansible|
-    ansible.playbook = "playbook.yml"
+    ansible.playbook = "ansible/playbook.yml"
     ansible.install = true
-    ansible.provisioning_path = "/home/vagrant"
   end
 end

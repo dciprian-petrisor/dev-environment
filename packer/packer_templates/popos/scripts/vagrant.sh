@@ -16,4 +16,4 @@ chmod -R go-rwsx $HOME_DIR/.ssh;
 echo 'pulseaudio -k' >> /home/vagrant/.bashrc
 # Vagrant does not recognize Pop!_OS as a Linux type OS out of the box.
 # This is a hack to bypass this
-sed -i 's/Pop!_OS/Pop!_OS Linux/' /etc/issue
+sed -i 's/Pop!_OS/Ubuntu 21.10/' /etc/issue
