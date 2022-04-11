@@ -20,6 +20,13 @@
       - git
       - fish
       - exa
+      - python3
+      - python3-pi
+      - ripgrep
+
+- name: Install python packages
+  pip:
+    name: pynvim
 
 - name: Change shell to fish
   become: true
@@ -47,8 +54,8 @@
   args:
     executable: /usr/bin/fish
 
-- name: Install tree-sitter-cli
-  shell: nvm use lts && npm i -g tree-sitter-cli
+- name: Install npm deps
+  shell: nvm use lts && npm i -g tree-sitter-cli intelephense vim-language-server
   args:
     executable: /usr/bin/fish
 
