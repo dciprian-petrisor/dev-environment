@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.box = "pcd/pop-os-21.10"
-  config.vm.box_version = "1.0.0"
+  config.vm.box_version = "1.0.1"
   # Leave this here, pop-os is based on ubuntu, but there is no official support
   # for detecting the guest OS, which is needed for things like shares to work properly.
   config.vm.guest = "ubuntu"
