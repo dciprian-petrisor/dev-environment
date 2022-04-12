@@ -21,7 +21,7 @@
       - fish
       - exa
       - python3
-      - python3-pi
+      - python3-pip
       - ripgrep
 
 - name: Install python packages
@@ -75,7 +75,7 @@
     dest: ~/
 
 - name: Install and update nvim plugins
-  shell: nvim --headless +PlugInstall +qall
+  shell: nvim --headless +PlugInstall +qall && nvim --headless +UpdateRemotePlugins +qall
   args:
     executable: /usr/bin/fish
 
