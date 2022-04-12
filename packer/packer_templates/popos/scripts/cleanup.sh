@@ -50,10 +50,8 @@ dpkg --list \
 # Exclude the files we don't need w/o uninstalling linux-firmware
 echo "Setup dpkg excludes for linux-firmware"
 cat <<_EOF_ | cat >> /etc/dpkg/dpkg.cfg.d/excludes
-#BENTO-BEGIN
 path-exclude=/lib/firmware/*
 path-exclude=/usr/share/doc/linux-firmware/*
-#BENTO-END
 _EOF_
 
 echo "delete the massive firmware files"
