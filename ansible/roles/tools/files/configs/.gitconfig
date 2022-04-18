@@ -1,0 +1,10 @@
+[user]
+	email = ciprian.petrisor@berlinger.com
+	name = berlinger-ciprianpetrisor
+	signingkey = 9ED8C0048B74A0B42FD3F5276578BA32FCE206D6
+[gpg]
+	program = gpg2
+[core]
+	editor = vim
+	eol = lf
+	autocrlf = false

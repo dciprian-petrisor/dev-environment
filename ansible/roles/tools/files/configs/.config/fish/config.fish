@@ -23,7 +23,7 @@ set -gx PATH bin $PATH
 set -gx PATH ~/bin $PATH
 set -gx PATH ~/.local/bin $PATH
 
-source (dirname (status --current-filename))/config-linux.fish
+source (dirname (status --current-filename))/utils.fish
 
 set LOCAL_CONFIG (dirname (status --current-filename))/config-local.fish
 if test -f $LOCAL_CONFIG

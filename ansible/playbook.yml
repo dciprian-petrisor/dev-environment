@@ -1,6 +1,7 @@
 ---
 - name: Configure VM 
   hosts: all 
+  gather_facts: false
   roles:
     - fonts
     - tools

@@ -1,5 +1,4 @@
 ---
-# tasks file for tools
 - name: Add fish shell ppa
   become: true
   ansible.builtin.apt_repository:
@@ -15,6 +14,10 @@
   apt:
     update_cache: yes
     pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
       - neovim
       - tmux
       - git
@@ -23,6 +26,26 @@
       - python3
       - python3-pip
       - ripgrep
+
+- name: Add Docker GPG key & apt source
+  shell: |  
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --no-tty --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  become: true
+
+- name: Install docker
+  become: true
+  apt:
+    update_cache: yes
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+- name: Install docker-compose
+  become: true
+  shell:  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
 
 - name: Install python packages
   pip:
@@ -65,7 +88,7 @@
     executable: /usr/bin/fish
 
 - name: Install vim-plug
-  shell: curl -fLo /home/vagrant/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  shell: curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   args:
     executable: /usr/bin/fish
 
@@ -74,8 +97,57 @@
     src: configs/
     dest: ~/
 
+- name: Render lspconfig.rc.vim template
+  template:
+    src: lspconfig.rc.vim.jinja
+    dest: ~/.config/nvim/after/plugin/lspconfig.rc.vim
+
 - name: Install and update nvim plugins
   shell: nvim --headless +PlugInstall +qall && nvim --headless +UpdateRemotePlugins +qall
   args:
     executable: /usr/bin/fish
 
+- name: Download AWS cli
+  shell: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -o awscliv2.zip
+  args:
+    chdir: /tmp
+
+- name: Install AWS cli
+  shell: sudo ./aws/install || sudo ./aws/install --update
+  args:
+    chdir: /tmp
+
+- name: Render aws credentials template
+  template:
+    src: aws_credentials.jinja
+    dest: ~/.aws/credentials
+
+- name: Copy SSH public key
+  copy:
+    content: "{{ ssh_pubkey }}"
+    dest: ~/.ssh/id_ed25519.pub
+    mode: '0644'
+
+- name: Copy SSH private key
+  copy:
+    content: "{{ ssh_privkey }}"
+    dest: ~/.ssh/id_ed25519
+    mode: '0600'
+
+- name: Copy the GPG key
+  copy:
+    content: "{{ gpg }}"
+    dest: ~/private.gpg
+
+- name: Install GPG key
+  shell: gpg --batch --passphrase '{{ gpg_passphrase }}' --import-options restore --import private.gpg
+  args:
+    chdir: ~/
+
+- name: Cleanup GPG key
+  file:
+    path: ~/private.gpg
+    state: absent
+
+- name: Trust GPG key
+  shell: (echo 5; echo y; echo save) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key {{ gpg_owner }} trust
