@@ -1,13 +1,9 @@
 ---
-- name: Add fish shell ppa
+- name: Add Docker GPG key & apt source
+  shell: |  
+    echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list
+    curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null
   become: true
-  ansible.builtin.apt_repository:
-    repo: ppa:fish-shell/release-3
-
-- name: Add neovim ppa
-  become: true
-  ansible.builtin.apt_repository:
-    repo: ppa:neovim-ppa/unstable
 
 - name: Install apt packages
   become: true
@@ -18,7 +14,6 @@
       - curl
       - gnupg
       - lsb-release
-      - neovim
       - tmux
       - git
       - fish
@@ -26,11 +21,17 @@
       - python3
       - python3-pip
       - ripgrep
+      - unzip
+
+- name: Install neovim
+  shell: |
+      curl -fsSLO https://github.com/neovim/neovim/releases/download/v0.7.0/nvim-linux64.deb; apt install -y ./nvim-linux64.deb
+  become: true
 
 - name: Add Docker GPG key & apt source
   shell: |  
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --no-tty --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --no-tty --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
       $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
   become: true
 

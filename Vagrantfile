@@ -2,31 +2,15 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.provider "hyperv" do |h|
-    h.memory = 4096
-    h.maxmemory = 8192
-    h.vmname = "dev"
-    h.vm_integration_services = {
-      guest_service_interface: true,
-      heartbeat: true,
-      key_value_pair_exchange: true,
-      shutdown: true,
-      time_synchronization: true,
-      vss: true
-    }
-    h.cpus = 8
-    h.enable_enhanced_session_mode = true
-    h.linked_clone = true
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 8192
+    v.name = "dev"
+    v.cpus = 4
   end
   
-  config.vm.synced_folder ".", "/vagrant", mount_options: ["dir_mode=0775,file_mode=0664"]
-  config.vm.box = "pcd/pop-os-21.10"
-  config.vm.box_version = "1.0.1"
-  # Leave this here, pop-os is based on ubuntu, but there is no official support
-  # for detecting the guest OS, which is needed for things like shares to work properly.
-  config.vm.guest = "ubuntu"
+  config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=0775,fmode=0664"]
+  config.vm.box = "generic/debian11"
   # use default switch to avoid prompts
-  config.vm.network "public_network", bridge: "Default Switch"
   config.vm.network "forwarded_port", guest: 80, host: 80 # nginx
   config.vm.network "forwarded_port", guest: 3306, host: 3306 # mysql
   config.vm.network "forwarded_port", guest: 3307, host: 3307 # keycloak mysql
@@ -38,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible_local" do |ansible| 
     ansible.playbook = "ansible/playbook.yml"
-    ansible.vault_password_file= "ansible/vault_password.txt"
+    ansible.vault_password_file = "ansible/vault_password.txt"
     ansible.install = true
   end
 end
